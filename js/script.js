@@ -313,5 +313,12 @@ function handleFile(file) {
         return;
     }
 
-    userImage.src = URL.createObjectURL(file);
+    const reader = new FileReader();
+
+    reader.onload = () => {
+        userImage.src = reader.result;   // Base64 → garantiert neues Bild
+        userImage.onload = null;         // altes onload löschen
+    };
+
+    reader.readAsDataURL(file); // WICHTIG: kein createObjectURL mehr
 }
