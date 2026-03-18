@@ -145,6 +145,11 @@ window.onload = async () => {
             loadingText.classList.remove("hidden");
 
             const canvas = document.getElementById('user-chart');
+
+            await new Promise(resolve => {
+                if (userImage.complete) resolve();
+                else userImage.onload = resolve;
+            });
             const results = await classifier.classify(userImage);
 
             // Diagramm erzeugen
@@ -193,11 +198,16 @@ window.onload = async () => {
 
             // Bild löschen
             userImage.src = "";
+            userImage.style.borderColor = "#ccc";
 
             // Diagramm löschen
             const canvas = document.getElementById('user-chart');
             const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Satz löschen
+            const oldSentence = document.querySelector("#user-image-container .result-sentence");
+            if (oldSentence) oldSentence.remove();
 
             // Einschätzung löschen
             userEvaluation.textContent = "";
@@ -207,6 +217,9 @@ window.onload = async () => {
 
             // Dateiname löschen
             uploadInput.value = "";
+
+            // Wichtig: ml5 darf keinen alten Zustand behalten
+            userImage.onload = null;
         });
     }
 };
