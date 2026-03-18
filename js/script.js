@@ -320,5 +320,5 @@ function handleFile(file) {
         userImage.onload = null;         // altes onload löschen
     };
 
-    reader.readAsDataURL(file); // WICHTIG: kein createObjectURL mehr
+    reader.readAsDataURL(file); 
 }
