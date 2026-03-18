@@ -199,7 +199,8 @@ window.onload = async () => {
             // Bild löschen
             userImage.src = "";
             userImage.style.borderColor = "#ccc";
-
+            userImage.onload = null;
+            
             // Diagramm löschen
             const canvas = document.getElementById('user-chart');
             const ctx = canvas.getContext('2d');
