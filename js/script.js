@@ -316,8 +316,10 @@ function handleFile(file) {
     const reader = new FileReader();
 
     reader.onload = () => {
-        userImage.src = reader.result;   // Base64 → garantiert neues Bild
-        userImage.onload = null;         // altes onload löschen
+        // Bild-URL mit Zeitstempel → verhindert Caching
+        userImage.src = reader.result + "#" + new Date().getTime();
+        userImage.onload = null;
+    
     };
 
     reader.readAsDataURL(file); 
