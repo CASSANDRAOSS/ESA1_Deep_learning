@@ -1,0 +1,226 @@
+<!-- ========================= -->
+<!-- Webanwendung, ESA1 im Kurs-->
+<!-- Deep Learning von-->
+<!--Cassandra Ludwig-->
+<!-- ========================= -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Bilderkennung mit ml5.js</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- ml5.js (KI-Modell) -->
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+
+    <!-- Chart.js (Diagramme) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+
+    <!-- Eigenes Script -->
+    <script src="js/script.js" defer></script>
+</head>
+
+<body>
+
+    <h1>Willkommen auf meiner Seite zum klassifizieren von Bildern </h1>
+
+    <!-- ========================= -->
+    <!--   STARTBEREICH           -->
+    <!-- ========================= -->
+    <div id="start-screen">
+
+        <div id="avatar-container">
+            <img id="avatar" src="images/2.png" alt="Avatar">
+        </div>
+
+        <button id="help-btn">Hilfe</button>
+
+        <div id="help-text" class="hidden">
+            <p>
+                Willkommen!  
+                Wähle unten einen Bereich aus, um die Anwendung zu nutzen.
+                Wähle „Beispielbilder“, um vorbereitete Bilder zu sehen,  
+                „Eigenes Bild“, um ein eigenes Bild zu klassifizieren,  
+                oder „Dokumentation & Diskussion“, um mehr über die Anwendung zu lesen.
+            </p>
+        </div>
+
+        <!-- Hauptmenü -->
+        <div id="main-menu">
+            <button class="menu-btn" data-target="menu-beispiele">
+                Beispielbilder
+            </button>
+
+            <button class="menu-btn" data-target="menu-eigenes">
+                Eigenes Bild
+            </button>
+
+            <button class="menu-btn" data-target="menu-doku">
+                Dokumentation & Diskussion
+            </button>
+        </div>
+    </div>
+
+
+
+
+    <!-- ========================= -->
+    <!--   UNTERMENÜ: BEISPIELE   -->
+    <!-- ========================= -->
+    <div id="menu-beispiele" class="submenu hidden">
+
+        <h2>Beispielbilder</h2>
+
+        <div class="accordion">
+
+            <div class="accordion-item">
+                <button class="accordion-header">Richtig klassifizierte Bilder</button>
+                <div class="accordion-content">
+                    <div id="correct-images"></div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">Falsch klassifizierte Bilder</button>
+                <div class="accordion-content">
+                    <div id="wrong-images"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!--   UNTERMENÜ: EIGENES BILD -->
+    <!-- ========================= -->
+    <div id="menu-eigenes" class="submenu hidden">
+
+        <h2>Eigenes Bild hochladen</h2>
+
+        <div class="upload-card">
+            <div id="drop-zone">
+                Ziehe hier ein Bild rein oder klicke zum Auswählen
+                <input type="file" id="upload-input" accept="image/*">
+            </div>
+            
+            <button id="classify-btn">Classify</button>
+            
+            <div id="user-image-container" class="example-row">
+                <img id="user-image" src="" alt="">
+                <canvas id="user-chart"></canvas>
+                <p id="loading-text" class="hidden">Modell lädt… bitte warten.</p>
+                <p id="user-evaluation" class="result-sentence"></p>
+            </div>
+
+            <button id="delete-image-btn">Bild löschen</button>
+
+                
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ========================= -->
+    <!--   UNTERMENÜ: DOKU/DISK   -->
+    <!-- ========================= -->
+    <div id="menu-doku" class="submenu hidden">
+
+        <h2>Dokumentation & Diskussion</h2>
+
+        <div class="accordion">
+
+            <div class="accordion-item">
+                <button class="accordion-header">Diskussion</button>
+                <div class="accordion-content">
+                   
+                    <p>
+                       Beim Experimentieren mit MobileNet habe ich gemerkt, wie stark die Wahrnehmung der KI davon abhängt, 
+                       wie „typisch“ ein Bild ist. Klare, gut ausgeleuchtete Motive mit eindeutigem Vordergrund wurden meist 
+                       sehr sicher und mit hoher Confidence korrekt klassifiziert (der Mond gehört scheinbar nicht dazu), 
+                       besonders wenn sie Objekte zeigen, die 
+                       vermutlich häufig im ImageNet-Datensatz vorkommen. Spannend wurde es bei Bildern, die ich leicht verändert 
+                       oder zugeschnitten habe: Schon kleine Drehungen, ungewohnte Perspektiven oder ein unruhiger Hintergrund führten 
+                       dazu, dass das Modell sich deutlich unsicherer wurde oder das Objekt komplett verfehlte. Teilweise war die 
+                       Confidence bei falschen Klassifikationen trotzdem erstaunlich hoch, ein Hinweis darauf, dass neuronale Netze 
+                       nicht „wissen“, wenn sie sich irren, sondern nur Wahrscheinlichkeiten verteilen. Besonders deutlich wurde 
+                       das bei Bildern, in denen sich Objekt und Hintergrund farblich oder strukturell ähneln: Hier scheint 
+                       das Modell Schwierigkeiten zu haben, die relevanten Merkmale sauber zu trennen. Ich habe außerdem gelernt, 
+                       wie wichtig es ist, die Ergebnisse nicht nur als Zahl zu sehen, sondern sie visuell aufzubereiten und die 
+                       Balkendiagramme machen sofort sichtbar, wie stark oder schwach das Modell zu einer Klasse tendiert. 
+                       Insgesamt hat mir die Aufgabe gezeigt, dass vortrainierte Modelle beeindruckend leistungsfähig sind, 
+                       aber immer im Rahmen ihrer Trainingsdaten denken und dass schon kleine Abweichungen von diesem 
+                       „gelernten Normalfall“ zu überraschenden Ergebnissen führen können. Interessant war auch, dass das Modell 
+                       beim Laden der Beispielbilder einen Moment zu brauchen scheint, als würde es jedes Motiv erst aufmerksam 
+                       betrachten, bevor es seine Interpretation preisgibt. Diese Verzögerung entsteht, weil MobileNet vollständig 
+                       im Browser arbeitet und jede Klassifikation einzeln berechnet.</p>
+
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">Technische Dokumentation</button>
+                <div class="accordion-content">
+                    <p>
+                        Die Anwendung wurde mit HTML, CSS und JavaScript in Visual Studio Code entwickelt und 
+                        anschließend über GitHub (GitHub Pages) als Web-Anwendung bereitgestellt. Für die Bilderkennung 
+                        nutze ich das ml5.js-Framework in der neueren Version, das als High-Level-Schnittstelle auf TensorFlow.js 
+                        aufbaut und mir den Zugriff auf das vortrainierte MobileNet-Modell ermöglicht, ohne selbst ein Modell 
+                        trainieren zu müssen. Für die Visualisierung der Klassifikationsergebnisse verwende ich Chart.js, um 
+                        die Confidence-Werte der Top-Klassen als Balkendiagramm darzustellen und so die Wahrscheinlichkeitsverteilung 
+                        intuitiv sichtbar zu machen. Technisch besonders ist die dynamische Erzeugung von HTML-Strukturen: 
+                        Für jedes Beispielbild wird zur Laufzeit ein Container mit Bild und zugehörigem Canvas-Element erzeugt, 
+                        sodass Bild und Diagramm automatisch in einem zweispaltigen Layout nebeneinander erscheinen. 
+                        Die Beispielbilder stammen von der Plattform Pixabay, da sie lizenzfrei nutzbar sind und sich gut für 
+                        Experimente mit unterschiedlichen Motiven und Hintergründen eignen. Für die Interaktion mit eigenen 
+                        Bildern habe ich sowohl einen klassischen Datei-Upload als auch Drag-and-Drop implementiert, inklusive 
+                        Dateiformatprüfung (nur JPG und PNG) und Live-Vorschau. Die Seite ist in mehrere Bereiche gegliedert, 
+                        die über Buttons und Akkordeon-Elemente gesteuert werden, sodass die Oberfläche trotz vieler Funktionen 
+                        übersichtlich bleibt und nicht überladen wirkt.
+
+                    </p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">Fachliche Dokumentation</button>
+                <div class="accordion-content">
+                    
+                    <p>
+                        Fachlich basiert die Anwendung auf dem vortrainierten MobileNet-Modell, 
+                        das über ml5.js geladen wird und auf dem ImageNet-Datensatz trainiert ist. 
+                        Die grundlegende Logik besteht darin, ein Bild zunächst in ein img-Element zu 
+                        laden und dieses Element direkt an das Modell zu übergeben; das Modell liefert 
+                        dann eine Liste von Klassen mit zugehörigen Confidence-Werten zurück. Aus diesen 
+                        Ergebnissen wähle ich die relevantesten Klassen aus und überführe sie in ein Balkendiagramm, 
+                        um sichtbar zu machen, wie stark das Modell verschiedene Hypothesen gewichtet. Für die 
+                        Beispielbilder habe ich bewusst Motive gewählt, bei denen sowohl klare, gut erkennbare 
+                        Objekte als auch schwierigere Fälle vorkommen, etwa ungewöhnliche Perspektiven, komplexe 
+                        Hintergründe oder Motive, die leicht mit ähnlichen Klassen verwechselt werden können.
+                        Die Gegenüberstellung von „richtig“ und „falsch“ klassifizierten Bildern macht deutlich, 
+                        wo die Stärken und Grenzen des Modells liegen: Es funktioniert besonders gut bei typischen, 
+                        häufig vorkommenden Objekten, während es bei ungewöhnlichen Darstellungen oder mehrdeutigen 
+                        Szenen ins Straucheln gerät. Die Visualisierung der Confidence-Werte hilft dabei, diese Unterschiede 
+                        nicht nur qualitativ, sondern auch quantitativ zu verstehen, etwa wenn eine falsche Klasse mit sehr 
+                        hoher Sicherheit gewählt wird. Die Nutzerinteraktion mit eigenen Bildern zeigt, wie sensibel das Modell 
+                        auf Bildausschnitt, Beleuchtung und Hintergrund reagiert und wie stark die Ergebnisse von der Datenbasis 
+                        abhängen, auf der MobileNet ursprünglich trainiert wurde. Als fachliche Grundlage dienen die ml5.js-Dokumentation, 
+                        das MobileNet-Paper (Howard et al., 2017) sowie die Beschreibung des ImageNet-Datensatzes; sie bilden 
+                        den theoretischen Rahmen für das, was in der Anwendung praktisch erfahrbar wird: dass KI-Modelle 
+                        keine „objektive Wahrheit“ sehen, sondern Muster, die sie aus ihren Trainingsdaten gelernt haben.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
