@@ -3,6 +3,8 @@
 // ==========================================
 
 let classifier;
+let userImage;
+let userChart = null; // WICHTIG: Chart-Instanz speichern
 
 window.onload = async () => {
 
@@ -30,9 +32,11 @@ window.onload = async () => {
     const helpBtn = document.getElementById("help-btn");
     const helpText = document.getElementById("help-text");
 
-    helpBtn.addEventListener("click", () => {
-        helpText.classList.toggle("hidden");
-    });
+    if (helpBtn && helpText) {
+        helpBtn.addEventListener("click", () => {
+            helpText.classList.toggle("hidden");
+        });
+    }
 
     // ============================
     // AKKORDEON
@@ -68,7 +72,7 @@ window.onload = async () => {
 
     const dropZone = document.getElementById('drop-zone');
     const uploadInput = document.getElementById('upload-input');
-    const userImage = document.getElementById('user-image');
+    userImage = document.getElementById('user-image');
     const classifyBtn = document.getElementById('classify-btn');
     const deleteBtn = document.getElementById('delete-image-btn');
 
@@ -116,7 +120,7 @@ window.onload = async () => {
             e.preventDefault();
             dropZone.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
-            handleFile(file, userImage);
+            handleFile(file);
         });
     }
 
@@ -127,7 +131,7 @@ window.onload = async () => {
     if (uploadInput) {
         uploadInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            handleFile(file, userImage);
+            handleFile(file);
         });
     }
 
@@ -137,30 +141,35 @@ window.onload = async () => {
 
     if (classifyBtn) {
         classifyBtn.addEventListener('click', async () => {
-            if (!userImage.src) {
+
+            if (!userImage.src || userImage.src === window.location.href) {
                 alert("Bitte zuerst ein Bild hochladen!");
                 return;
             }
 
             loadingText.classList.remove("hidden");
 
-            const canvas = document.getElementById('user-chart');
-
             await new Promise(resolve => {
                 if (userImage.complete) resolve();
                 else userImage.onload = resolve;
             });
+
+            const canvas = document.getElementById('user-chart');
+
+            // WICHTIG: altes Diagramm zerstören
+            if (userChart) {
+                userChart.destroy();
+                userChart = null;
+            }
+
             const results = await classifier.classify(userImage);
 
             // Diagramm erzeugen
-            createChart(results, canvas);
+            userChart = createChart(results, canvas);
 
-            // Bewertung
             const top = results[0];
 
-            // ------------------------------
-            // Rahmenfarbe je nach Sicherheit
-            // ------------------------------
+            // Rahmenfarbe
             if (top.confidence >= 0.7) {
                 userImage.style.borderColor = "green";
             } else if (top.confidence >= 0.3) {
@@ -169,18 +178,14 @@ window.onload = async () => {
                 userImage.style.borderColor = "red";
             }
 
-            // ------------------------------
-            // Satz unter dem Diagramm/Einschätzung
-            // ------------------------------
-
+            // Einschätzung
             let evaluation = "";
-
             if (top.confidence >= 0.7) {
                 evaluation = "Das Modell hat eine hohe Sicherheit. Die Klassifikation ist wahrscheinlich korrekt.";
             } else if (top.confidence >= 0.3) {
                 evaluation = "Das Modell ist unsicher. Die Klassifikation könnte stimmen.";
             } else {
-                evaluation = "Die Sicherheit ist sehr gering. Ddie Klassifikation ist wahrscheinlich falsch.";
+                evaluation = "Die Sicherheit ist sehr gering. Die Klassifikation ist wahrscheinlich falsch.";
             }
 
             userEvaluation.textContent = evaluation;
@@ -196,19 +201,16 @@ window.onload = async () => {
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
 
-            // Bild löschen
+            // Bild zurücksetzen
             userImage.src = "";
             userImage.style.borderColor = "#ccc";
             userImage.onload = null;
-            
-            // Diagramm löschen
-            const canvas = document.getElementById('user-chart');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Satz löschen
-            const oldSentence = document.querySelector("#user-image-container .result-sentence");
-            if (oldSentence) oldSentence.remove();
+            // Diagramm zerstören
+            if (userChart) {
+                userChart.destroy();
+                userChart = null;
+            }
 
             // Einschätzung löschen
             userEvaluation.textContent = "";
@@ -218,9 +220,6 @@ window.onload = async () => {
 
             // Dateiname löschen
             uploadInput.value = "";
-
-            // Wichtig: ml5 darf keinen alten Zustand behalten
-            userImage.onload = null;
         });
     }
 };
@@ -243,14 +242,12 @@ async function classifyExamples(imageList, containerId) {
         img.src = src;
         row.appendChild(img);
 
-        // Ladeanzeige
         const loading = document.createElement("p");
         loading.textContent = "Modell lädt… bitte warten.";
         loading.style.fontStyle = "italic";
         row.appendChild(loading);
 
         img.onload = async () => {
-
             const results = await classifier.classify(img);
 
             loading.remove();
@@ -286,7 +283,7 @@ function createChart(results, canvas) {
     const labels = results.map(r => r.label);
     const data = results.map(r => (r.confidence * 100).toFixed(2));
 
-    new Chart(canvas, {
+    return new Chart(canvas, {
         type: 'bar',
         data: {
             labels: labels,
@@ -308,7 +305,7 @@ function createChart(results, canvas) {
 // Funktion: Nutzerbild laden
 // ==========================================
 
-function handleFile(file, userImage) {
+function handleFile(file) {
     if (!file) return;
 
     if (!['image/jpeg', 'image/png'].includes(file.type)) {
