@@ -181,11 +181,11 @@ window.onload = async () => {
             // Einschätzung
             let evaluation = "";
             if (top.confidence >= 0.7) {
-                evaluation = "Das Modell hat eine hohe Sicherheit. Die Klassifikation ist wahrscheinlich korrekt.";
+                evaluation = "Die Prozentzahl ist sehr hoch. Die Klassifikation ist wahrscheinlich korrekt";
             } else if (top.confidence >= 0.3) {
                 evaluation = "Das Modell ist unsicher. Die Klassifikation könnte stimmen.";
             } else {
-                evaluation = "Die Sicherheit ist sehr gering. Die Klassifikation ist wahrscheinlich falsch.";
+                evaluation = "Die Wahrscheinlichkeit ist sehr gering. Die Klassifikation ist vermutlich nicht korrekt.";
             }
 
             userEvaluation.textContent = evaluation;
@@ -316,7 +316,7 @@ function handleFile(file) {
     const reader = new FileReader();
 
     reader.onload = () => {
-        // Bild-URL mit Zeitstempel → verhindert Caching
+        // Bild-URL mit Zeitstempel
         userImage.src = reader.result + "#" + new Date().getTime();
         userImage.onload = null;
     
