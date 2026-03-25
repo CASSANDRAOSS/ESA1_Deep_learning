@@ -3,40 +3,76 @@
 <!-- Deep Learning von-->
 <!--Cassandra Ludwig-->
 <!-- ========================= -->
+
+<!-- 
+Diese Seite bildet den Rahmen der Anwendung, 
+sie verbindet Struktur, Inhalt und Interaktion zu einem funktionierenden Ganzen.
+-->
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+
+     <!-- 
+    Der Titel beschreibt knapp, worum es geht: 
+    Bilder werden mithilfe von KI erkannt.
+    -->
     <title>Bilderkennung mit ml5.js</title>
 
-    <!-- CSS -->
+    <!-- 
+    Das Stylesheet sorgt für das visuelle Erscheinungsbild der Seite.
+    -->
     <link rel="stylesheet" href="css/style.css">
 
-    <!-- ml5.js (KI-Modell) -->
+    <!-- 
+    ml5.js stellt das KI-Modell bereit, 
+    welches die eigentliche Klassifikation übernimmt.
+    -->
     <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
 
-    <!-- Chart.js (Diagramme) -->
+    <!-- 
+    Chart.js wird genutzt, um Ergebnisse visuell darzustellen.
+    -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-    <!-- Eigenes Script -->
+    <!-- 
+    Eigenes Script steuert die Logik und Interaktionen der Anwendung.
+    -->
     <script src="js/script.js" defer></script>
 </head>
 
 <body>
 
+    <!-- 
+    Die Überschrift dient als Einstieg 
+    und erklärt direkt den Zweck der Seite.
+    -->
     <h1>Willkommen auf meiner Seite zum klassifizieren von Bildern </h1>
 
     <!-- ========================= -->
     <!--   STARTBEREICH           -->
     <!-- ========================= -->
+
+    <!-- 
+    Der Startbereich ist der erste Kontaktpunkt für den Nutzer.
+    -->
     <div id="start-screen">
 
+        <!-- 
+        Der Avatar sorgt für eine visuelle Identität.
+        -->
         <div id="avatar-container">
             <img id="avatar" src="images/2.png" alt="Avatar">
         </div>
 
+        <!-- 
+        Der Hilfebutton bietet Orientierung bei der Nutzung.
+        -->
         <button id="help-btn">Hilfe</button>
 
+        <!-- 
+        Der Hilfetext erklärt kurz die wichtigsten Funktionen.
+        -->
         <div id="help-text" class="hidden">
             <p>
                 Willkommen!  
@@ -47,7 +83,9 @@
             </p>
         </div>
 
-        <!-- Hauptmenü -->
+        <!-- 
+        Das Hauptmenü bietet die verschiedenen Wege durch die Anwendung.
+        -->
         <div id="main-menu">
             <button class="menu-btn" data-target="menu-beispiele">
                 Beispielbilder
@@ -69,12 +107,20 @@
     <!-- ========================= -->
     <!--   UNTERMENÜ: BEISPIELE   -->
     <!-- ========================= -->
+
+    <!-- 
+    Dieser Bereich zeigt vorbereitete Beispiele 
+    zur Veranschaulichung der Klassifikation.
+    -->
     <div id="menu-beispiele" class="submenu hidden">
 
         <h2>Beispielbilder</h2>
 
         <div class="accordion">
 
+            <!-- 
+            Richtig erkannte Bilder zeigen die Stärken des Modells.
+            -->
             <div class="accordion-item">
                 <button class="accordion-header">Richtig klassifizierte Bilder</button>
                 <div class="accordion-content">
@@ -82,6 +128,9 @@
                 </div>
             </div>
 
+            <!-- 
+            Falsch erkannte Bilder machen Grenzen sichtbar.
+            -->
             <div class="accordion-item">
                 <button class="accordion-header">Falsch klassifizierte Bilder</button>
                 <div class="accordion-content">
@@ -98,18 +147,32 @@
     <!-- ========================= -->
     <!--   UNTERMENÜ: EIGENES BILD -->
     <!-- ========================= -->
+
+    <!-- 
+    Hier kann der Nutzer selbst aktiv werden 
+    und eigene Bilder testen.
+    -->
     <div id="menu-eigenes" class="submenu hidden">
 
         <h2>Eigenes Bild hochladen</h2>
 
         <div class="upload-card">
+            <!-- 
+            Bereich für Upload oder Drag-and-Drop.
+            -->
             <div id="drop-zone">
                 Ziehe hier ein Bild rein oder klicke zum Auswählen
                 <input type="file" id="upload-input" accept="image/*">
             </div>
-            
+
+            <!-- 
+            Startet die Klassifikation des Bildes.
+            -->
             <button id="classify-btn">Classify</button>
-            
+
+            <!-- 
+            Anzeige von Bild, Diagramm und Ergebnis.
+            -->
             <div id="user-image-container" class="example-row">
                 <img id="user-image" src="" alt="">
                 <canvas id="user-chart"></canvas>
@@ -117,6 +180,9 @@
                 <p id="user-evaluation" class="result-sentence"></p>
             </div>
 
+            <!-- 
+            Ermöglicht das Zurücksetzen der Eingabe.
+            -->
             <button id="delete-image-btn">Bild löschen</button>
 
                 
@@ -130,12 +196,20 @@
     <!-- ========================= -->
     <!--   UNTERMENÜ: DOKU/DISK   -->
     <!-- ========================= -->
+
+    <!-- 
+    Dieser Bereich liefert Hintergrundwissen 
+    und reflektiert die Ergebnisse.
+    -->
     <div id="menu-doku" class="submenu hidden">
 
         <h2>Dokumentation & Diskussion</h2>
 
         <div class="accordion">
 
+            <!-- 
+            Persönliche Beobachtungen und Erfahrungen mit dem Modell.
+            -->
             <div class="accordion-item">
                 <button class="accordion-header">Diskussion</button>
                 <div class="accordion-content">
@@ -164,6 +238,9 @@
                 </div>
             </div>
 
+            <!-- 
+            Beschreibung der technischen Umsetzung.
+            -->
             <div class="accordion-item">
                 <button class="accordion-header">Technische Dokumentation</button>
                 <div class="accordion-content">
@@ -188,6 +265,9 @@
                 </div>
             </div>
 
+            <!-- 
+            Fachlicher Hintergrund zur Funktionsweise der KI.
+            -->
             <div class="accordion-item">
                 <button class="accordion-header">Fachliche Dokumentation</button>
                 <div class="accordion-content">
