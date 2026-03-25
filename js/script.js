@@ -2,9 +2,13 @@
 // ml5 Image Classification – neue API
 // ==========================================
 
+/* 
+Zentrale Variablen der Anwendung – 
+hier werden Modell, Bild und Diagramm verwaltet.
+*/
 let classifier;
 let userImage;
-let userChart = null; // WICHTIG: Chart-Instanz speichern
+let userChart = null; // Chart-Instanz speichern
 
 window.onload = async () => {
 
@@ -12,6 +16,10 @@ window.onload = async () => {
     // MENÜ-NAVIGATION
     // ============================
 
+    /* 
+    Die Navigation steuert, welcher Bereich sichtbar ist, 
+    je nach Auswahl des Nutzers.
+    */
     const menuButtons = document.querySelectorAll(".menu-btn");
     const submenus = document.querySelectorAll(".submenu");
 
@@ -29,6 +37,10 @@ window.onload = async () => {
     // Hilfe-Text ein-/ausblenden
     // ============================
 
+    /* 
+    Der Hilfetext wird bei Bedarf sichtbar gemacht 
+    und kann wieder ausgeblendet werden.
+    */
     const helpBtn = document.getElementById("help-btn");
     const helpText = document.getElementById("help-text");
 
@@ -42,6 +54,10 @@ window.onload = async () => {
     // AKKORDEON
     // ============================
 
+    /* 
+    Inhalte werden hier schrittweise ein- und ausgeklappt, 
+    um die Übersicht zu bewahren.
+    */
     document.querySelectorAll(".accordion-header").forEach(header => {
         header.addEventListener("click", () => {
             const content = header.nextElementSibling;
@@ -70,6 +86,10 @@ window.onload = async () => {
     // HTML-Elemente für Upload
     // ============================
 
+    /* 
+    Referenzen auf wichtige Elemente, 
+    um später darauf zugreifen zu können.
+    */
     const dropZone = document.getElementById('drop-zone');
     const uploadInput = document.getElementById('upload-input');
     userImage = document.getElementById('user-image');
@@ -95,6 +115,10 @@ window.onload = async () => {
     // ml5 Modell laden
     // ------------------------------
 
+    /* 
+    Das vortrainierte Modell wird geladen 
+    und steht danach für Klassifikationen bereit.
+    */
     console.log("Lade MobileNet...");
     classifier = await ml5.imageClassifier('MobileNet');
     console.log("Modell geladen!");
@@ -106,6 +130,10 @@ window.onload = async () => {
     // Drag-and-Drop
     // ------------------------------
 
+    /* 
+    Ermöglicht das direkte Hineinziehen von Bildern.
+    */
+    if
     if (dropZone) {
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -128,6 +156,9 @@ window.onload = async () => {
     // Datei-Upload
     // ------------------------------
 
+    /* 
+    Klassischer Upload über Dateiauswahl.
+    */
     if (uploadInput) {
         uploadInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -139,6 +170,9 @@ window.onload = async () => {
     // Nutzerbild klassifizieren
     // ------------------------------
 
+    /* 
+    Startet die Analyse des hochgeladenen Bildes.
+    */
     if (classifyBtn) {
         classifyBtn.addEventListener('click', async () => {
 
@@ -156,7 +190,7 @@ window.onload = async () => {
 
             const canvas = document.getElementById('user-chart');
 
-            // WICHTIG: altes Diagramm zerstören
+            // Altes Diagramm entfernen
             if (userChart) {
                 userChart.destroy();
                 userChart = null;
@@ -164,12 +198,14 @@ window.onload = async () => {
 
             const results = await classifier.classify(userImage);
 
-            // Diagramm erzeugen
+            // Neues Diagramm erstellen
             userChart = createChart(results, canvas);
 
             const top = results[0];
 
-            // Rahmenfarbe
+            /* 
+            Farbfeedback zeigt, wie sicher das Modell ist.
+            */
             if (top.confidence >= 0.7) {
                 userImage.style.borderColor = "green";
             } else if (top.confidence >= 0.3) {
@@ -178,7 +214,9 @@ window.onload = async () => {
                 userImage.style.borderColor = "red";
             }
 
-            // Einschätzung
+            /* 
+            Kurze textliche Einschätzung des Ergebnisses.
+            */
             let evaluation = "";
             if (top.confidence >= 0.7) {
                 evaluation = "Die Prozentzahl ist sehr hoch. Die Klassifikation ist wahrscheinlich korrekt";
@@ -198,6 +236,9 @@ window.onload = async () => {
     // Bild löschen
     // ------------------------------
 
+    /* 
+    Setzt alles zurück, um neu starten zu können.
+    */
     if (deleteBtn) {
         deleteBtn.addEventListener('click', () => {
 
@@ -206,7 +247,7 @@ window.onload = async () => {
             userImage.style.borderColor = "#ccc";
             userImage.onload = null;
 
-            // Diagramm zerstören
+            // Diagramm entfernen
             if (userChart) {
                 userChart.destroy();
                 userChart = null;
@@ -227,6 +268,9 @@ window.onload = async () => {
 // ==========================================
 // Funktion: Beispielbilder klassifizieren
 // ==========================================
+/* 
+Diese Funktion zeigt, wie das Modell mit vorbereiteten Bildern arbeitet.
+*/
 
 async function classifyExamples(imageList, containerId) {
     const container = document.getElementById(containerId);
@@ -279,6 +323,10 @@ async function classifyExamples(imageList, containerId) {
 // Funktion: Diagramm erstellen
 // ==========================================
 
+/* 
+Erstellt ein Balkendiagramm, 
+um die Wahrscheinlichkeiten sichtbar zu machen.
+*/
 function createChart(results, canvas) {
     const labels = results.map(r => r.label);
     const data = results.map(r => (r.confidence * 100).toFixed(2));
@@ -305,6 +353,10 @@ function createChart(results, canvas) {
 // Funktion: Nutzerbild laden
 // ==========================================
 
+/* 
+Verarbeitet das hochgeladene Bild 
+und bereitet es für die Analyse vor.
+*/
 function handleFile(file) {
     if (!file) return;
 
