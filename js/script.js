@@ -120,8 +120,13 @@ window.onload = async () => {
     und steht danach für Klassifikationen bereit.
     */
     console.log("Lade MobileNet...");
-    classifier = await ml5.imageClassifier('MobileNet');
-    console.log("Modell geladen!");
+    classifier = await new Promise((resolve) => {
+        ml5.imageClassifier('MobileNet', (model) => {
+            resolve(model);
+        });
+    });
+
+console.log("Modell geladen!");
 
     classifyExamples(correctImages, 'correct-images');
     classifyExamples(wrongImages, 'wrong-images');
