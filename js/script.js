@@ -133,7 +133,7 @@ window.onload = async () => {
     /* 
     Ermöglicht das direkte Hineinziehen von Bildern.
     */
-    if
+    
     if (dropZone) {
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
